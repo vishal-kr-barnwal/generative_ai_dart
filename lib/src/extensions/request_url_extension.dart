@@ -1,21 +1,46 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:generative_ai_dart/generative_ai_dart.dart';
 import 'package:generative_ai_dart/src/logger.dart';
-import 'package:generative_ai_dart/src/types/request_url.dart';
 
 extension MakeRequest on RequestUrl {
-  Future<HttpClientResponse> fetch(
-      final String body, final HttpClient client) async {
+  Future<T> fetchJson<T>(
+      Object body, T Function(Map<String, dynamic> fromJson) fromJson) async {
+    if (stream == true) {
+      throw GoogleGenerativeAIError(
+          "Use fetch instead of fetchJson for Streaming request");
+    }
+
+    final response = await fetch(jsonEncode(body));
+    final json = await response.join();
+
+    return fromJson(jsonDecode(json) as Map<String, dynamic>);
+  }
+
+  Future<Stream<String>> fetch(final String body) async {
     try {
+      final client = HttpClient();
+
       final response = await (await client.postUrl(toUri())
             ..headers.contentType = ContentType.json
             ..write(body))
           .close();
 
       if (response.ok) {
-        return response;
+        final controller = StreamController<String>();
+        final stream = response.transform(utf8.decoder);
+
+        stream.listen((data) => controller.add(data), onDone: () {
+          controller.close();
+          client.close();
+        }, onError: (err) {
+          controller.addError(err);
+          client.close();
+        });
+
+        return controller.stream;
       }
 
       var message = "";
