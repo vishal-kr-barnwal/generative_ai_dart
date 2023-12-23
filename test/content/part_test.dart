@@ -1,4 +1,4 @@
-import 'package:generative_ai_dart/src/content.dart';
+import 'package:generative_ai_dart/src/types/content.dart';
 import 'package:test/test.dart';
 
 void main() {
