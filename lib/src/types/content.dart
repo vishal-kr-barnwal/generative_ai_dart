@@ -145,6 +145,24 @@ final class Content extends InputContent {
   Map<String, dynamic> toJson() {
     return {"parts": parts.map((e) => e.toJson()).toList(), "role": role};
   }
+
+  factory Content.fromInput(InputContent input) {
+    final role = input.role;
+    final parts = input.parts;
+
+    if (parts is String) {
+      return Content(parts: [TextPart(parts)], role: role);
+    }
+
+    return Content(
+        parts: (parts as List).map((e) {
+          if (e is String) {
+            return TextPart(e);
+          }
+          return e as Part;
+        }).toList(),
+        role: role);
+  }
 }
 
 /// The base class [InputContent].
