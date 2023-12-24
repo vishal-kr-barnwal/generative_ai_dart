@@ -7,21 +7,22 @@ enum Task {
   streamGenerateContent,
   countTokens,
   embedContent,
-  batchEmbedContents,
+  batchEmbedContents;
+
+  bool isStream() => this == Task.streamGenerateContent;
 }
 
 final class RequestUrl {
   final String model;
   final Task task;
   final String apiKey;
-  final bool stream;
 
-  RequestUrl(this.model, this.task, this.apiKey, this.stream);
+  RequestUrl(this.model, this.task, this.apiKey);
 
   @override
   String toString() {
     String url = '$_baseUrl/$_apiVersion/models/$model:$task';
-    if (stream) {
+    if (task.isStream()) {
       url += "?alt=sse";
     }
     return url;

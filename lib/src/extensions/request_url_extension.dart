@@ -8,24 +8,24 @@ import 'package:generative_ai_dart/src/logger.dart';
 extension MakeRequest on RequestUrl {
   Future<T> fetchJson<T>(
       Object body, T Function(Map<String, dynamic> fromJson) fromJson) async {
-    if (stream == true) {
+    if (task.isStream()) {
       throw GoogleGenerativeAIError(
           "Use fetch instead of fetchJson for Streaming request");
     }
 
-    final response = await fetch(jsonEncode(body));
+    final response = await fetch(body);
     final json = await response.join();
 
     return fromJson(jsonDecode(json) as Map<String, dynamic>);
   }
 
-  Future<Stream<String>> fetch(final String body) async {
+  Future<Stream<String>> fetch<T>(final T body) async {
     try {
       final client = HttpClient();
 
       final response = await (await client.postUrl(toUri())
             ..headers.contentType = ContentType.json
-            ..write(body))
+            ..write(jsonEncode(body)))
           .close();
 
       if (response.ok) {
