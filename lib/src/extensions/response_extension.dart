@@ -56,6 +56,15 @@ extension GenerateContentResponseExtension on GenerateContentResponse {
   }
 
   /// Returns the text of the first valid candidate's content part
-  String _getText() =>
-      candidates?.firstOrNull?.content.parts.firstOrNull?.text ?? "";
+  String _getText() {
+    if (candidates != null && candidates!.isNotEmpty) {
+      var firstCandidate = candidates!.first;
+
+      if (firstCandidate.content.parts.isNotEmpty) {
+        return firstCandidate.content.parts.first.text ?? "";
+      }
+    }
+
+    return "";
+  }
 }
