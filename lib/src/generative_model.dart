@@ -1,5 +1,50 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:generative_ai_dart/generative_ai_dart.dart';
-import 'package:generative_ai_dart/src/stream_reader.dart';
+
+final _responseLineRE = RegExp(r'^data: (.*)(?:\n\n|\r\r|\r\n\r\n)');
+
+Stream<GenerateContentResponse> _processStream(Stream<String> stream) {
+  final controller = StreamController<GenerateContentResponse>();
+  var currentText = "";
+
+  stream.listen(
+    (value) {
+      currentText += value;
+      var match = _responseLineRE.firstMatch(currentText);
+
+      while (match != null) {
+        try {
+          final response = GenerateContentResponse.fromJson(
+              jsonDecode(match.group(1)!) as Map<String, dynamic>);
+
+          controller.add(response);
+        } catch (e) {
+          controller.addError(GoogleGenerativeAIError(
+            "Error parsing JSON response: \"${match.group(1)}\"",
+          ));
+
+          return;
+        }
+
+        currentText = currentText.substring(match.group(0)!.length);
+        match = _responseLineRE.firstMatch(currentText);
+      }
+    },
+    onDone: () {
+      if (currentText.trim().isNotEmpty) {
+        controller.addError(GoogleGenerativeAIError("Failed to parse stream"));
+      }
+      controller.close();
+    },
+    onError: (e) {
+      controller.addError(e);
+    },
+  );
+
+  return controller.stream;
+}
 
 final class GenerativeModel {
   final String model;
@@ -21,8 +66,11 @@ final class GenerativeModel {
         generationConfig: generationConfig,
         safetySettings: safetySettings));
 
-    yield* processStream(stream);
+    yield* _processStream(stream);
   }
+
+  ChatSession startChat([List<Content> history = const []]) =>
+      ChatSession(model: this, history: history);
 
   Future<GenerateContentResponse> generateContent(List<Content> request) {
     final url = RequestUrl(model, Task.generateContent, apiKey);
