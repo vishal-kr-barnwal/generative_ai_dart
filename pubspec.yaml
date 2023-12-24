@@ -1,7 +1,9 @@
 name: generative_ai_dart
 description: Dart Library to interact with various Google Gen AI models with Chat Session capability.
 version: 0.1.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/Vishal07051999/generative_ai_dart
+issue_tracker: https://github.com/Vishal07051999/generative_ai_dart/issues
+homepage: https://github.com/Vishal07051999/generative_ai_dart
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
