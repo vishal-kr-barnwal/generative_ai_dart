@@ -13,7 +13,7 @@
 /// - **Stream or Single Content Output:** Allows generation of a stream of content or singular instances of content.
 ///
 /// ## Usage
-/// To interact with the Google GenAI models, import the library and create a model object:
+/// To interact with the Google GenAI models, import the library and create a [GenerativeModel] object:
 ///
 /// ```dart
 /// import 'package:generative_ai_dart/generative_ai_dart.dart';
@@ -26,5 +26,7 @@
 ///
 /// For more information on how to use this library, refer to the complete documentation.
 library generative_ai_dart;
+
+import 'src/generative_ai_dart_base.dart';
 
 export 'src/generative_ai_dart_base.dart';

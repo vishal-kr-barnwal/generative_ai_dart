@@ -1,5 +1,5 @@
 name: generative_ai_dart
-description: A starting point for Dart libraries or applications.
+description: Dart Library to interact with various Google Gen AI models with Chat Session capability.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 

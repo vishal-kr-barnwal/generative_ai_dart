@@ -1,39 +1,47 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Generative AI Dart
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+The `generative_ai_dart` is a powerful Dart library that interfaces with Google's GenAI models.
+It supports diverse types of inputs and can generate robust chat sessions, making it a comprehensive tool for
+leveraging AI in your Dart applications.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+**This have been inspired from [Google Generative AI JS SDK](https://github.com/google/generative-ai-js)**
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## Key Features
 
-## Features
+- **Google GenAI Models Interoperability:** The library provides seamless interaction with Google's GenAI models.
+- **Diverse Input Support:** It can handle different types of inputs such as Blob and String, providing flexibility
+  according to your needs.
+- **Chat Session Generation:** It has the capability to generate and manage chat sessions.
+- **Stream or Single Content Output:** You can choose to generate a stream of content or a single instance of
+  content depending on your requirements.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## Installation
 
-## Getting started
+Run the following command in your shell :-
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
-```dart
-const like = 'sample';
+```shell
+dart pub add generative-ai-dart
 ```
 
-## Additional information
+And, then you can start a chat session using :-
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```dart
+void main() {
+  final genAI = GenerativeModel();
+  genAI.startChat();
+}
+```
+
+Refer to the complete documentation for more detailed usage instructions.
+
+## Documentation
+
+Complete documentation is available [here].
+
+## Contributing
+
+Contributions are welcome. See the [CONTRIBUTING.md] for guidelines.
+
+## License
+
+`generative_ai_dart` is available under the [MIT License](LICENSE).
