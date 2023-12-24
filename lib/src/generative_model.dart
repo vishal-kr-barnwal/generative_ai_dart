@@ -46,7 +46,7 @@ Stream<GenerateContentResponse> _processStream(Stream<String> stream) {
   return controller.stream;
 }
 
-final class GenerativeModel {
+class GenerativeModel {
   final String model;
   final String apiKey;
   final List<SafetySetting> safetySettings;
