@@ -46,15 +46,23 @@ GenerationConfig _$GenerationConfigFromJson(Map<String, dynamic> json) =>
       topK: json['topK'] as int?,
     );
 
-Map<String, dynamic> _$GenerationConfigToJson(GenerationConfig instance) =>
-    <String, dynamic>{
-      'candidateCount': instance.candidateCount,
-      'stopSequences': instance.stopSequences,
-      'maxOutputTokens': instance.maxOutputTokens,
-      'temperature': instance.temperature,
-      'topP': instance.topP,
-      'topK': instance.topK,
-    };
+Map<String, dynamic> _$GenerationConfigToJson(GenerationConfig instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('candidateCount', instance.candidateCount);
+  writeNotNull('stopSequences', instance.stopSequences);
+  writeNotNull('maxOutputTokens', instance.maxOutputTokens);
+  writeNotNull('temperature', instance.temperature);
+  writeNotNull('topP', instance.topP);
+  writeNotNull('topK', instance.topK);
+  return val;
+}
 
 BaseParams _$BaseParamsFromJson(Map<String, dynamic> json) => BaseParams(
       safetySettings: (json['safetySettings'] as List<dynamic>?)

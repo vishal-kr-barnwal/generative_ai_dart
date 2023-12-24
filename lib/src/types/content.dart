@@ -72,8 +72,10 @@ abstract class Part {
   ///
   /// Returns a [Map<String, dynamic>] which includes the [text] and
   /// [inlineData].
-  Map<String, dynamic> toJson() =>
-      {'text': text, 'inlineData': inlineData?.toJson()};
+  Map<String, dynamic> toJson() => {
+        if (text != null) 'text': text,
+        if (inlineData != null) 'inlineData': inlineData
+      };
 }
 
 /// [TextPart] is a final class which extends from the [Part] class. It represents
@@ -141,7 +143,10 @@ final class Content extends InputContent {
   /// Convert the [Content] object into a JSON map. It maps each part
   /// in the parts list to a raw map using [Part.toJson]
   Map<String, dynamic> toJson() {
-    return {"parts": parts.map((e) => e.toJson()).toList(), "role": role};
+    return {
+      "parts": parts.map((e) => e.toJson()).toList(),
+      if (role != null) "role": role
+    };
   }
 }
 
@@ -221,6 +226,6 @@ class InputContent {
   /// Converts `this` to a `Map<String, dynamic>` that can be encoded into
   /// JSON.
   Map<String, dynamic> toJson() {
-    return {"parts": _partsToJson(), "role": role};
+    return {"parts": _partsToJson(), if (role != null) "role": role};
   }
 }

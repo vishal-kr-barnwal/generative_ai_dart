@@ -88,13 +88,21 @@ CitationSource _$CitationSourceFromJson(Map<String, dynamic> json) =>
       uri: json['uri'] as String?,
     );
 
-Map<String, dynamic> _$CitationSourceToJson(CitationSource instance) =>
-    <String, dynamic>{
-      'startIndex': instance.startIndex,
-      'endIndex': instance.endIndex,
-      'uri': instance.uri,
-      'license': instance.license,
-    };
+Map<String, dynamic> _$CitationSourceToJson(CitationSource instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('startIndex', instance.startIndex);
+  writeNotNull('endIndex', instance.endIndex);
+  writeNotNull('uri', instance.uri);
+  writeNotNull('license', instance.license);
+  return val;
+}
 
 CitationMetadata _$CitationMetadataFromJson(Map<String, dynamic> json) =>
     CitationMetadata(
@@ -126,15 +134,24 @@ GenerateContentCandidate _$GenerateContentCandidateFromJson(
     );
 
 Map<String, dynamic> _$GenerateContentCandidateToJson(
-        GenerateContentCandidate instance) =>
-    <String, dynamic>{
-      'index': instance.index,
-      'content': instance.content,
-      'finishReason': _$FinishReasonEnumMap[instance.finishReason],
-      'finishMessage': instance.finishMessage,
-      'safetyRatings': instance.safetyRatings,
-      'citationMetadata': instance.citationMetadata,
-    };
+    GenerateContentCandidate instance) {
+  final val = <String, dynamic>{
+    'index': instance.index,
+    'content': instance.content,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('finishReason', _$FinishReasonEnumMap[instance.finishReason]);
+  writeNotNull('finishMessage', instance.finishMessage);
+  writeNotNull('safetyRatings', instance.safetyRatings);
+  writeNotNull('citationMetadata', instance.citationMetadata);
+  return val;
+}
 
 const _$FinishReasonEnumMap = {
   FinishReason.unspecified: 'FINISH_REASON_UNSPECIFIED',
@@ -156,12 +173,20 @@ PromptFeedback _$PromptFeedbackFromJson(Map<String, dynamic> json) =>
       blockReasonMessage: json['blockReasonMessage'] as String?,
     );
 
-Map<String, dynamic> _$PromptFeedbackToJson(PromptFeedback instance) =>
-    <String, dynamic>{
-      'blockReason': _$BlockReasonEnumMap[instance.blockReason],
-      'safetyRatings': instance.safetyRatings,
-      'blockReasonMessage': instance.blockReasonMessage,
-    };
+Map<String, dynamic> _$PromptFeedbackToJson(PromptFeedback instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('blockReason', _$BlockReasonEnumMap[instance.blockReason]);
+  val['safetyRatings'] = instance.safetyRatings;
+  writeNotNull('blockReasonMessage', instance.blockReasonMessage);
+  return val;
+}
 
 const _$BlockReasonEnumMap = {
   BlockReason.unspecified: 'BLOCKED_REASON_UNSPECIFIED',
@@ -183,8 +208,16 @@ GenerateContentResponse _$GenerateContentResponseFromJson(
     );
 
 Map<String, dynamic> _$GenerateContentResponseToJson(
-        GenerateContentResponse instance) =>
-    <String, dynamic>{
-      'candidates': instance.candidates,
-      'promptFeedback': instance.promptFeedback,
-    };
+    GenerateContentResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('candidates', instance.candidates);
+  writeNotNull('promptFeedback', instance.promptFeedback);
+  return val;
+}
