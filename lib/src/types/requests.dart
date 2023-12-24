@@ -25,7 +25,7 @@ final class GenerationConfig {
   final num? topP;
   final int? topK;
 
-  GenerationConfig(
+  const GenerationConfig(
       {this.candidateCount,
       this.stopSequences,
       this.maxOutputTokens,
@@ -44,7 +44,9 @@ base class BaseParams {
   final List<SafetySetting> safetySettings;
   final GenerationConfig generationConfig;
 
-  BaseParams({required this.safetySettings, required this.generationConfig});
+  BaseParams(
+      {this.safetySettings = const [],
+      this.generationConfig = const GenerationConfig()});
 
   factory BaseParams.fromJson(Map<String, dynamic> json) =>
       _$BaseParamsFromJson(json);
@@ -57,9 +59,7 @@ final class ModelParams extends BaseParams {
   final String model;
 
   ModelParams(
-      {required this.model,
-      required super.generationConfig,
-      required super.safetySettings});
+      {required this.model, super.generationConfig, super.safetySettings});
 
   factory ModelParams.fromJson(Map<String, dynamic> json) =>
       _$ModelParamsFromJson(json);
@@ -73,9 +73,7 @@ final class GenerateContentRequest extends BaseParams {
   final List<Content> contents;
 
   GenerateContentRequest(
-      {required this.contents,
-      required super.generationConfig,
-      required super.safetySettings});
+      {required this.contents, super.generationConfig, super.safetySettings});
 
   factory GenerateContentRequest.fromJson(Map<String, dynamic> json) =>
       _$GenerateContentRequestFromJson(json);
@@ -89,9 +87,7 @@ final class StartChatParams extends BaseParams {
   final List<InputContent> history;
 
   StartChatParams(
-      {required this.history,
-      required super.generationConfig,
-      required super.safetySettings});
+      {required this.history, super.generationConfig, super.safetySettings});
 
   factory StartChatParams.fromJson(Map<String, dynamic> json) =>
       _$StartChatParamsFromJson(json);

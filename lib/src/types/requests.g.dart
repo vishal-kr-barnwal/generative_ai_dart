@@ -57,11 +57,14 @@ Map<String, dynamic> _$GenerationConfigToJson(GenerationConfig instance) =>
     };
 
 BaseParams _$BaseParamsFromJson(Map<String, dynamic> json) => BaseParams(
-      safetySettings: (json['safetySettings'] as List<dynamic>)
-          .map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      generationConfig: GenerationConfig.fromJson(
-          json['generationConfig'] as Map<String, dynamic>),
+      safetySettings: (json['safetySettings'] as List<dynamic>?)
+              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      generationConfig: json['generationConfig'] == null
+          ? const GenerationConfig()
+          : GenerationConfig.fromJson(
+              json['generationConfig'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BaseParamsToJson(BaseParams instance) =>
@@ -72,11 +75,14 @@ Map<String, dynamic> _$BaseParamsToJson(BaseParams instance) =>
 
 ModelParams _$ModelParamsFromJson(Map<String, dynamic> json) => ModelParams(
       model: json['model'] as String,
-      generationConfig: GenerationConfig.fromJson(
-          json['generationConfig'] as Map<String, dynamic>),
-      safetySettings: (json['safetySettings'] as List<dynamic>)
-          .map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      generationConfig: json['generationConfig'] == null
+          ? const GenerationConfig()
+          : GenerationConfig.fromJson(
+              json['generationConfig'] as Map<String, dynamic>),
+      safetySettings: (json['safetySettings'] as List<dynamic>?)
+              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$ModelParamsToJson(ModelParams instance) =>
@@ -92,11 +98,14 @@ GenerateContentRequest _$GenerateContentRequestFromJson(
       contents: (json['contents'] as List<dynamic>)
           .map((e) => Content.fromJson(e as Map<String, dynamic>))
           .toList(),
-      generationConfig: GenerationConfig.fromJson(
-          json['generationConfig'] as Map<String, dynamic>),
-      safetySettings: (json['safetySettings'] as List<dynamic>)
-          .map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      generationConfig: json['generationConfig'] == null
+          ? const GenerationConfig()
+          : GenerationConfig.fromJson(
+              json['generationConfig'] as Map<String, dynamic>),
+      safetySettings: (json['safetySettings'] as List<dynamic>?)
+              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$GenerateContentRequestToJson(
@@ -112,11 +121,14 @@ StartChatParams _$StartChatParamsFromJson(Map<String, dynamic> json) =>
       history: (json['history'] as List<dynamic>)
           .map((e) => InputContent.fromJson(e as Map<String, dynamic>))
           .toList(),
-      generationConfig: GenerationConfig.fromJson(
-          json['generationConfig'] as Map<String, dynamic>),
-      safetySettings: (json['safetySettings'] as List<dynamic>)
-          .map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      generationConfig: json['generationConfig'] == null
+          ? const GenerationConfig()
+          : GenerationConfig.fromJson(
+              json['generationConfig'] as Map<String, dynamic>),
+      safetySettings: (json['safetySettings'] as List<dynamic>?)
+              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$StartChatParamsToJson(StartChatParams instance) =>

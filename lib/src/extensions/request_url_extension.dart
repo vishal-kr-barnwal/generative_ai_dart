@@ -23,7 +23,9 @@ extension MakeRequest on RequestUrl {
     try {
       final client = HttpClient();
 
-      final response = await (await client.postUrl(toUri())
+      final url = toUri();
+
+      final response = await (await client.postUrl(url)
             ..headers.contentType = ContentType.json
             ..write(jsonEncode(body)))
           .close();

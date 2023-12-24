@@ -21,7 +21,7 @@ final class RequestUrl {
 
   @override
   String toString() {
-    String url = '$_baseUrl/$_apiVersion/models/$model:$task';
+    String url = '$_baseUrl/$_apiVersion/models/$model:${task.name}';
     if (task.isStream()) {
       url += "?alt=sse";
     }
