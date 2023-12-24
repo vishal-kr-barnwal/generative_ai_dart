@@ -186,16 +186,3 @@ Map<String, dynamic> _$GenerateContentResponseToJson(
       'candidates': instance.candidates,
       'promptFeedback': instance.promptFeedback,
     };
-
-GenerateContentResult _$GenerateContentResultFromJson(
-        Map<String, dynamic> json) =>
-    GenerateContentResult(
-      response: GenerateContentResponse.fromJson(
-          json['response'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$GenerateContentResultToJson(
-        GenerateContentResult instance) =>
-    <String, dynamic>{
-      'response': instance.response,
-    };

@@ -1,7 +1,5 @@
+import 'package:generative_ai_dart/generative_ai_dart.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'content.dart';
-import 'enums.dart';
 
 part 'responses.g.dart';
 
@@ -149,26 +147,4 @@ final class GenerateContentResponse {
       _$GenerateContentResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$GenerateContentResponseToJson(this);
-}
-
-final class GenerateContentStreamResult {
-  final Stream<GenerateContentResponse> stream;
-  final Future<GenerateContentResponse> response;
-
-  GenerateContentStreamResult({
-    required this.stream,
-    required this.response,
-  });
-}
-
-@JsonSerializable()
-class GenerateContentResult {
-  final GenerateContentResponse response;
-
-  GenerateContentResult({required this.response});
-
-  Map<String, dynamic> toJson() => _$GenerateContentResultToJson(this);
-
-  static GenerateContentResult fromJson(Map<String, dynamic> json) =>
-      _$GenerateContentResultFromJson(json);
 }

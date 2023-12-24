@@ -10,6 +10,40 @@ extension on GenerateContentCandidate {
   }
 }
 
+extension on List<GenerateContentResponse> {
+  GenerateContentResponse aggregate() {
+    final promptFeedback = lastOrNull?.promptFeedback;
+
+    final candidates = map((e) => e.candidates)
+        .whereType<List<GenerateContentCandidate>>()
+        .expand((element) => element);
+
+    if (candidates.isEmpty) {
+      return GenerateContentResponse(
+          candidates: null, promptFeedback: promptFeedback);
+    }
+
+    final indexedCandidates =
+        Map.fromEntries(candidates.map((e) => MapEntry(e.index, e)));
+
+    final keys = indexedCandidates.keys.toList()..sort();
+
+    return GenerateContentResponse(
+        candidates: keys.isEmpty
+            ? null
+            : keys.map((e) => indexedCandidates[e]!).toList(),
+        promptFeedback: promptFeedback);
+  }
+}
+
+extension GenerateContentResponseAggregator on Stream<GenerateContentResponse> {
+  Future<GenerateContentResponse> toResponse() async {
+    final responses = await toList();
+
+    return responses.aggregate();
+  }
+}
+
 extension GenerateContentResponseExtension on GenerateContentResponse {
   String text() {
     if (candidates != null && candidates!.isNotEmpty) {
