@@ -3,30 +3,46 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:generative_ai_dart/generative_ai_dart.dart';
-import 'package:generative_ai_dart/src/logger.dart';
 
-extension MakeRequest on RequestUrl {
-  Future<T> fetchJson<T>(
-      Object body, T Function(Map<String, dynamic> fromJson) fromJson) async {
-    if (task.isStream()) {
+import '../logger.dart';
+import '../version.dart';
+
+const _baseUrl = "https://generativelanguage.googleapis.com";
+
+const _apiVersion = "v1";
+
+final _clientName = 'genai-dart/$packageVersion';
+
+extension Request on RequestType {
+  Uri _toUri(final String model) {
+    return Uri.parse('$_baseUrl/$_apiVersion/models/$model:$name')
+        .replace(queryParameters: {if (isStream()) 'alt': 'sse'});
+  }
+
+  Future<T> fetchJson<T>(final GenerativeModel model, final Object body,
+      final T Function(Map<String, dynamic> fromJson) fromJson) async {
+    if (isStream()) {
       throw GoogleGenerativeAIError(
           "Use fetch instead of fetchJson for Streaming request");
     }
 
-    final response = await fetch(body);
+    final response = await fetch(model, body);
     final json = await response.join();
 
     return fromJson(jsonDecode(json) as Map<String, dynamic>);
   }
 
-  Future<Stream<String>> fetch<T>(final T body) async {
+  Future<Stream<String>> fetch<T>(
+      final GenerativeModel model, final T body) async {
     try {
       final client = HttpClient();
 
-      final url = toUri();
+      final url = _toUri(model.model);
 
       final response = await (await client.postUrl(url)
             ..headers.contentType = ContentType.json
+            ..headers.add("x-goog-api-key", model.apiKey)
+            ..headers.add("x-goog-api-client", _clientName)
             ..write(jsonEncode(body)))
           .close();
 

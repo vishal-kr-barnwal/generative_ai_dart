@@ -1,5 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
+enum RequestType {
+  generateContent,
+  streamGenerateContent,
+  countTokens,
+  embedContent,
+  batchEmbedContents;
+
+  bool isStream() => this == RequestType.streamGenerateContent;
+}
+
 /// Enum representing different categories of harm in the system responsible for
 /// managing harmful prompts or candidates. Each value stands for a particular
 /// type of harmful content that may lead to the blocking of a prompt or

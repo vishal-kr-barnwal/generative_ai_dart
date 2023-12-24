@@ -59,12 +59,12 @@ final class GenerativeModel {
 
   Stream<GenerateContentResponse> generateContentStream(
       List<Content> request) async* {
-    final url = RequestUrl(model, Task.streamGenerateContent, apiKey);
-
-    final stream = await url.fetch(GenerateContentRequest(
-        contents: request,
-        generationConfig: generationConfig,
-        safetySettings: safetySettings));
+    final stream = await RequestType.streamGenerateContent.fetch(
+        this,
+        GenerateContentRequest(
+            contents: request,
+            generationConfig: generationConfig,
+            safetySettings: safetySettings));
 
     yield* _processStream(stream);
   }
@@ -72,35 +72,27 @@ final class GenerativeModel {
   ChatSession startChat([List<Content> history = const []]) =>
       ChatSession(model: this, history: history);
 
-  Future<GenerateContentResponse> generateContent(List<Content> request) {
-    final url = RequestUrl(model, Task.generateContent, apiKey);
+  Future<GenerateContentResponse> generateContent(List<Content> request) =>
+      RequestType.generateContent.fetchJson(
+          this,
+          GenerateContentRequest(
+              contents: request,
+              generationConfig: generationConfig,
+              safetySettings: safetySettings),
+          GenerateContentResponse.fromJson);
 
-    return url.fetchJson(
-        GenerateContentRequest(
-            contents: request,
-            generationConfig: generationConfig,
-            safetySettings: safetySettings),
-        GenerateContentResponse.fromJson);
-  }
-
-  Future<EmbedContentResponse> embedContent(EmbedContentRequest params) {
-    final url = RequestUrl(model, Task.embedContent, apiKey);
-
-    return url.fetchJson(params, EmbedContentResponse.fromJson);
-  }
+  Future<EmbedContentResponse> embedContent(EmbedContentRequest params) =>
+      RequestType.embedContent
+          .fetchJson(this, params, EmbedContentResponse.fromJson);
 
   Future<BatchEmbedContentsResponse> batchEmbedContents(
-      List<EmbedContentRequest> request) {
-    final url = RequestUrl(model, Task.embedContent, apiKey);
+          List<EmbedContentRequest> request) =>
+      RequestType.batchEmbedContents.fetchJson(
+          this,
+          BatchEmbedContentsRequest(requests: request),
+          BatchEmbedContentsResponse.fromJson);
 
-    return url.fetchJson(BatchEmbedContentsRequest(requests: request),
-        BatchEmbedContentsResponse.fromJson);
-  }
-
-  Future<CountTokensResponse> countTokens(List<Content> request) {
-    final url = RequestUrl(model, Task.countTokens, apiKey);
-
-    return url.fetchJson(
-        CountTokensRequest(contents: request), CountTokensResponse.fromJson);
-  }
+  Future<CountTokensResponse> countTokens(List<Content> request) =>
+      RequestType.countTokens.fetchJson(this,
+          CountTokensRequest(contents: request), CountTokensResponse.fromJson);
 }
