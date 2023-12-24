@@ -52,7 +52,7 @@ class CountTokensResponse {
 }
 
 @JsonSerializable()
-final class SafetyRating {
+class SafetyRating {
   final HarmCategory category;
   final HarmProbability probability;
 
@@ -65,7 +65,7 @@ final class SafetyRating {
 }
 
 @JsonSerializable()
-final class CitationSource {
+class CitationSource {
   final int? startIndex;
   final int? endIndex;
   final String? uri;
@@ -132,7 +132,7 @@ class PromptFeedback {
 }
 
 @JsonSerializable()
-final class GenerateContentResponse {
+class GenerateContentResponse {
   final List<GenerateContentCandidate>? candidates;
   final PromptFeedback? promptFeedback;
 

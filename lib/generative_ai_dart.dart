@@ -1,6 +1,3 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
-library;
+library generative_ai_dart;
 
 export 'src/generative_ai_dart_base.dart';

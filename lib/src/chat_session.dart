@@ -6,7 +6,7 @@ import 'package:generative_ai_dart/generative_ai_dart.dart';
 /// `ChatSession` manages interaction with a [GenerativeModel].
 ///
 /// It sends messages to and receives messages from an AI model.
-final class ChatSession {
+class ChatSession {
   /// An instance of [GenerativeModel] used for generating AI responses.
   final GenerativeModel _model;
 
