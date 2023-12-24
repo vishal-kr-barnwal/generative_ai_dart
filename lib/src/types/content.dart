@@ -29,26 +29,26 @@ class GenerativeContentBlob {
   Map<String, dynamic> toJson() => {'mimeType': mimeType, 'data': data};
 }
 
-/// An abstract base class named [Part].
-///
-/// [Part] is a base class for other classes, containing common properties
-/// like [text] and [inlineData] and methods like [Part.fromJson] and
-/// [Part.toJson].
+/// [Part] is an abstract base class and it is used as a common ancestor for
+/// other classes. It provides common properties such as [text] and [inlineData]
+/// and also methods like [Part.fromJson] and [Part.toJson].
 abstract class Part {
-  /// An optional string that describes the part
+  /// An optional [text] which describes the part
   final String? text;
 
-  /// An optional instance of [GenerativeContentBlob] that may be inline with part
+  /// An optional [inlineData] which may be inserted
+  /// into the part.
   final GenerativeContentBlob? inlineData;
 
-  /// A private constructor used internally in the class.
+  /// A private constructor which is only used inside the class.
   Part._({this.text, this.inlineData});
 
-  /// Factory method for creating instances of [Part] from a JSON object.
+  /// Factory method which helps to create instances of [Part] from a
+  /// JSON data structure.
   ///
-  /// This method creates a variant of [Part] (`TextPart` or `InlineDataPart`)
-  /// based on the provided [json] object. If both `text` and `inlineData`
-  /// fields in the JSON are `null`, this method throws an `AssertionError`.
+  /// Can create either [TextPart] or [InlineDataPart] depending on the
+  /// [text] and [inlineData] fields in [json]. If both fields are null,
+  /// it throws an [AssertionError].
   factory Part.fromJson(Map<String, dynamic> json) {
     if (json["text"] != null) {
       return TextPart._(json["text"]);
@@ -60,38 +60,48 @@ abstract class Part {
     throw AssertionError("Both Text and Inline Data can't be null");
   }
 
+  /// Factory method which helps to create instances of [Part] from a
+  /// [String].
   factory Part.text(String text) => TextPart._(text);
 
+  /// Factory method which helps to create instances of [Part] from a
+  /// [GenerativeContentBlob].
   factory Part.inline(GenerativeContentBlob blob) => InlineDataPart._(blob);
 
+  /// Asynchronously reads a [File] and returns an instance of [Part].
   static Future<Part> fromFile(File file) async {
     final bytes = await file.readAsBytes();
 
     return InlineDataPart._fromBytes(bytes);
   }
 
+  /// Synchronously reads a [File] and returns an instance of [Part].
   factory Part.fromFileSync(File file) {
     final bytes = file.readAsBytesSync();
 
     return InlineDataPart._fromBytes(bytes);
   }
 
+  /// Synchronously reads a [File] using a file path and returns an instance
+  /// of [Part].
   factory Part.fromFilePathSync(String path) {
     File file = File(path);
 
     return Part.fromFileSync(file);
   }
 
+  /// Asynchronously reads a [File] using a file path and returns an instance
+  /// of [Part].
   static Future<Part> fromFilePath(String path) async {
     File file = File(path);
 
     return Part.fromFile(file);
   }
 
-  /// A method to serialize a [Part] object to a JSON object.
+  /// Serializes the [Part] object into a JSON data structure.
   Map<String, dynamic> toJson() => {
         if (text != null) 'text': text,
-        if (inlineData != null) 'inlineData': inlineData
+        if (inlineData != null) 'inlineData': inlineData?.toJson(),
       };
 }
 

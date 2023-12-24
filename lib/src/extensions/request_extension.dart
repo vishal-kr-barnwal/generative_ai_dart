@@ -84,7 +84,23 @@ extension Request on RequestType {
   }
 }
 
+/// [HttpClientResponse] extension introduces additional capabilities.
+///
+/// This extension introduces a getter called 'ok' which checks if the HTTP response
+/// status code is successful (in the 200-299 range).
+///
+/// For example, to check if a response was successful, you can:
+///
+/// ```Dart
+/// if (response.ok) {
+///   print('Request was successful');
+/// }
+/// ```
 extension on HttpClientResponse {
+  /// Checks if the [HttpClientResponse] has a status code in the 2xx range.
+  ///
+  /// Returns true if the HTTP status code of the [HttpClientResponse] indicates
+  /// success (200-299).
   bool get ok {
     return (statusCode ~/ 100) == 2;
   }
