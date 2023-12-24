@@ -1,12 +1,36 @@
 import 'package:json_annotation/json_annotation.dart';
 
+/// This is an enum representing various types of requests. It includes methods
+/// to generate content, stream content, count tokens, embed content, and batch
+/// embed contents.
+///
+/// There is also a method to check if the request type is a stream generation
+/// request.
 enum RequestType {
+  /// Reflects a request type that involves generating content.
   generateContent,
+
+  /// Reflects a request type that involves generating and streaming content.
   streamGenerateContent,
+
+  /// Reflects a request type that involves counting tokens.
   countTokens,
+
+  /// Reflects a request type that involves embedding content.
   embedContent,
+
+  /// Reflects a request type that involves batching and embedding content.
   batchEmbedContents;
 
+  /// Method that checks whether request type is [streamGenerateContent].
+  ///
+  /// Returns `true` if the request type is [streamGenerateContent], else
+  /// `false`.
+  ///
+  /// Example usage:
+  /// ```
+  /// bool isStreaming = RequestType.streamGenerateContent.isStream();
+  /// ```
   bool isStream() => this == RequestType.streamGenerateContent;
 }
 
