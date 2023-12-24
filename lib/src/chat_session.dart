@@ -23,7 +23,7 @@ final class ChatSession {
 
   Future<GenerateContentResponse> sendMessage(List<Part> message) async {
     await _lockSend();
-    final content = Content.user(parts: message);
+    final content = Content.user(message);
     final request = [..._history, content];
 
     try {
@@ -40,7 +40,7 @@ final class ChatSession {
 
   Stream<GenerateContentResponse> sendMessageStream(List<Part> message) async* {
     await _lockSend();
-    final content = Content.user(parts: message);
+    final content = Content.user(message);
     final request = [..._history, content];
 
     try {
@@ -70,10 +70,18 @@ final class ChatSession {
       Content input, List<GenerateContentResponse> output) {
     _history.add(input);
 
-    _history.addAll(output
+    final outputContent = output
         .map((e) => e.candidates ?? [])
         .expand((element) => element)
-        .map((e) => e.content));
+        .map((e) => e.content);
+
+    _history.addAll(outputContent.map((e) {
+      if (e.role == null) {
+        return Content.model(e.parts);
+      }
+
+      return e;
+    }));
 
     _sendCompleter.complete();
   }

@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:mime/mime.dart';
+
 /// This class represents a content blob with a specific MIME type and data.
 /// Each blob is characterized by its MIME type (like `"text/plain"`,
 /// `"image/png"`, etc.) and the actual content in the form of a string.
@@ -53,6 +59,30 @@ abstract class Part {
     throw AssertionError("Both Text and Inline Data can't be null");
   }
 
+  static Future<Part> fromFile(File file) async {
+    final bytes = await file.readAsBytes();
+
+    return InlineDataPart._fromBytes(bytes);
+  }
+
+  factory Part.fromFileSync(File file) {
+    final bytes = file.readAsBytesSync();
+
+    return InlineDataPart._fromBytes(bytes);
+  }
+
+  factory Part.fromFilePathSync(String path) {
+    File file = File(path);
+
+    return Part.fromFileSync(file);
+  }
+
+  static Future<Part> fromFilePath(String path) async {
+    File file = File(path);
+
+    return Part.fromFile(file);
+  }
+
   /// A method to serialize a [Part] object to a JSON object.
   Map<String, dynamic> toJson() => {
         if (text != null) 'text': text,
@@ -84,6 +114,13 @@ class InlineDataPart extends Part {
   /// inline data.
   InlineDataPart(GenerativeContentBlob inlineData)
       : super._(inlineData: inlineData);
+
+  factory InlineDataPart._fromBytes(Uint8List bytes) {
+    final mimeType = lookupMimeType('', headerBytes: bytes)!;
+
+    return InlineDataPart(
+        GenerativeContentBlob(mimeType: mimeType, data: base64Encode(bytes)));
+  }
 }
 
 /// This final class [Content] represents a list of [Part] instances.
@@ -96,7 +133,7 @@ class Content {
   final String? role;
 
   /// Construct a [Content] object;
-  Content({required this.parts, required this.role});
+  Content._({required this.parts, required this.role});
 
   /// Factory method to create a [Content] object from a JSON object that
   /// contains a 'parts' field, where each part is constructed using
@@ -117,14 +154,14 @@ class Content {
       });
     }
 
-    return Content(parts: parts, role: json["role"] as String?);
+    return Content._(parts: parts, role: json["role"] as String?);
   }
 
   /// Factory method to create a user [Content] object.
-  Content.user({required this.parts}) : role = "user";
+  Content.user(this.parts) : role = "user";
 
   /// Factory method to create a model [Content] object.
-  Content.model({required this.parts}) : role = "model";
+  Content.model(this.parts) : role = "model";
 
   /// Converts the current [Content] object into a JSON object.
   Map<String, dynamic> toJson() => {
