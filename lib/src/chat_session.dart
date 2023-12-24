@@ -1,4 +1,3 @@
-/// Dart libraries.
 import 'dart:async';
 
 import 'package:generative_ai_dart/generative_ai_dart.dart';

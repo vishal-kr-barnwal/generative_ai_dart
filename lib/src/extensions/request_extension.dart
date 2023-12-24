@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:generative_ai_dart/generative_ai_dart.dart';
+import 'package:http/http.dart' as http;
 
 import '../logger.dart';
 import '../version.dart';
@@ -60,14 +60,14 @@ extension Request on RequestType {
   /// continuous stream of `String` data.
   ///
   /// It takes in two parameters:
-  /// - [model]: A `GenerativeModel` instance.
+  /// - [model]: A [GenerativeModel] instance.
   /// - [body]: A generic data type [`T`](https://api.dart.dev/stable/2.9.2/dart-core/T-class.html).
   ///
   /// Initially, it establishes an HTTP client and constructs a URL using
   /// `model.model`. It then performs a post operation to that URL, setting
   /// several headers and writing the body in JSON format. If the response
   /// is OK, handles the responses and closes the client, otherwise,
-  /// it gets the error message, closes the client and throws a `GoogleGenerativeAIError`.
+  /// it gets the error message, closes the client and throws a [GoogleGenerativeAIError].
   ///
   /// During any part of this process, if an error occurs, it logs the error,
   /// closes the client, and throws a `GoogleGenerativeAIError` with a description
@@ -82,17 +82,20 @@ extension Request on RequestType {
   /// ```
   Future<Stream<String>> fetch<T>(
       final GenerativeModel model, final T body) async {
-    final client = HttpClient();
+    final client = http.Client();
 
     try {
       final url = _toUri(model.model);
 
-      final response = await (await client.postUrl(url)
-            ..headers.contentType = ContentType.json
-            ..headers.add("x-goog-api-key", model.apiKey)
-            ..headers.add("x-goog-api-client", _clientName)
-            ..write(jsonEncode(body)))
-          .close();
+      final request = http.Request('POST', url)
+        ..body = jsonEncode(body)
+        ..headers.addAll({
+          'content-type': 'application/json',
+          'x-goog-api-key': model.apiKey,
+          'x-goog-api-client': _clientName,
+        });
+
+      final response = await client.send(request);
 
       if (response.ok) {
         return _handleOKResponseAndCloseClient(response, client);
@@ -115,18 +118,19 @@ extension Request on RequestType {
   }
 
   /// Future function [_getErrorMessage] gets error messages from
-  /// [HttpClientResponse] received as a response.
+  /// [http.StreamedResponse] received as a response.
   ///
   /// Reference:
-  /// * [HttpClientResponse] used in function arguments.
+  /// * [http.StreamedResponse] used in function arguments.
   /// * [Future] represents a potential value, or error, that will be available
   /// at some time in the future.
-  Future<String> _getErrorMessage(HttpClientResponse response) async {
+  Future<String> _getErrorMessage(http.StreamedResponse response) async {
     var message = "";
 
     try {
-      final error = (jsonDecode(await response.transform(utf8.decoder).join())
-          as Map<String, dynamic>)["error"] as Map<String, dynamic>;
+      final error =
+          (jsonDecode(await response.stream.transform(utf8.decoder).join())
+              as Map<String, dynamic>)["error"] as Map<String, dynamic>;
       message = error["message"];
 
       if (error["details"] != null) {
@@ -141,7 +145,7 @@ extension Request on RequestType {
   /// Handles a successful HTTP response by closing the client and returning the
   /// response data as a [Stream<String>].
   ///
-  /// This function accepts [HttpClientResponse] and [HttpClient] as arguments.
+  /// This function accepts [http.StreamedResponse] and [http.Client] as arguments.
   /// It transforms the response to UTF-8 format and listens to the stream. The
   /// response data is added to the [controller] which is an instance of
   /// [StreamController<String>]. When the stream is drained, the controller
@@ -152,13 +156,13 @@ extension Request on RequestType {
   /// contains the response data.
   ///
   /// References:
-  /// * [HttpClientResponse] is a future-based HTTP client.
-  /// * [HttpClient] a client that receives content, like HTTP requests.
+  /// * [http.StreamedResponse] is a future-based HTTP client.
+  /// * [http.Client] a client that receives content, like HTTP requests.
   /// * [StreamController] controls a stream that sends events to its listeners.
   Stream<String> _handleOKResponseAndCloseClient(
-      HttpClientResponse response, HttpClient client) {
+      http.StreamedResponse response, http.Client client) {
     final controller = StreamController<String>();
-    final stream = response.transform(utf8.decoder);
+    final stream = response.stream.transform(utf8.decoder);
 
     stream.listen((data) => controller.add(data), onDone: () {
       controller.close();
@@ -172,7 +176,7 @@ extension Request on RequestType {
   }
 }
 
-/// [HttpClientResponse] extension introduces additional capabilities.
+/// [http.StreamedResponse] extension introduces additional capabilities.
 ///
 /// This extension introduces a getter called 'ok' which checks if the HTTP response
 /// status code is successful (in the 200-299 range).
@@ -184,10 +188,10 @@ extension Request on RequestType {
 ///   print('Request was successful');
 /// }
 /// ```
-extension on HttpClientResponse {
-  /// Checks if the [HttpClientResponse] has a status code in the 2xx range.
+extension on http.StreamedResponse {
+  /// Checks if the [http.StreamedResponse] has a status code in the 2xx range.
   ///
-  /// Returns true if the HTTP status code of the [HttpClientResponse] indicates
+  /// Returns true if the HTTP status code of the [http.StreamedResponse] indicates
   /// success (200-299).
   bool get ok {
     return (statusCode ~/ 100) == 2;

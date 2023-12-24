@@ -1,3 +1,8 @@
+## 0.1.1
+
+- Moving `HTTP Client` from `dart:io` to `http` package to support Web platform.
+- Remove `Part.fromPath` method to support Web platform.
+
 ## 0.1.0
 
 - Enabled Dart implementation of Google's Generative AI JavaScript

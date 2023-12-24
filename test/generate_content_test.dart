@@ -15,8 +15,8 @@ void main() {
       Part.blob(File('test_resources/cat.png').readAsBytesSync())
     ];
 
-    final response = model.generateContent([Content.user(parts)]);
+    final response = model.generateContentStream([Content.user(parts)]);
 
-    print(jsonEncode(await response));
+    print(jsonEncode(await response.toList()));
   });
 }
