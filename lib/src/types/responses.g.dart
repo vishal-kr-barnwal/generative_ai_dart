@@ -147,16 +147,18 @@ const _$FinishReasonEnumMap = {
 
 PromptFeedback _$PromptFeedbackFromJson(Map<String, dynamic> json) =>
     PromptFeedback(
-      safetyRatings: (json['safetyRatings'] as List<dynamic>)
-          .map((e) => SafetyRating.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      blockReason: $enumDecode(_$BlockReasonEnumMap, json['blockReason']),
-      blockReasonMessage: json['blockReasonMessage'] as String,
+      safetyRatings: (json['safetyRatings'] as List<dynamic>?)
+              ?.map((e) => SafetyRating.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      blockReason:
+          $enumDecodeNullable(_$BlockReasonEnumMap, json['blockReason']),
+      blockReasonMessage: json['blockReasonMessage'] as String?,
     );
 
 Map<String, dynamic> _$PromptFeedbackToJson(PromptFeedback instance) =>
     <String, dynamic>{
-      'blockReason': _$BlockReasonEnumMap[instance.blockReason]!,
+      'blockReason': _$BlockReasonEnumMap[instance.blockReason],
       'safetyRatings': instance.safetyRatings,
       'blockReasonMessage': instance.blockReasonMessage,
     };

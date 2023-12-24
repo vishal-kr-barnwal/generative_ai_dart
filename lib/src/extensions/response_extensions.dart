@@ -70,7 +70,7 @@ extension GenerateContentResponseExtension on GenerateContentResponse {
     var message = "";
     if ((candidates?.isEmpty ?? true) && promptFeedback != null) {
       message +=
-          "Response was blocked due to ${promptFeedback!.blockReason.name} : ${promptFeedback!.blockReasonMessage}";
+          "Response was blocked due to ${promptFeedback!.blockReason?.name} : ${promptFeedback!.blockReasonMessage}";
     } else if (candidates?.isNotEmpty ?? false) {
       final firstCandidate = candidates![0];
       message +=

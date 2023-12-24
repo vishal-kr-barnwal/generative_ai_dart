@@ -116,14 +116,14 @@ class GenerateContentCandidate {
 
 @JsonSerializable()
 class PromptFeedback {
-  final BlockReason blockReason;
+  final BlockReason? blockReason;
   final List<SafetyRating> safetyRatings;
-  final String blockReasonMessage;
+  final String? blockReasonMessage;
 
   PromptFeedback(
-      {required this.safetyRatings,
-      required this.blockReason,
-      required this.blockReasonMessage});
+      {this.safetyRatings = const [],
+      this.blockReason,
+      this.blockReasonMessage});
 
   factory PromptFeedback.fromJson(Map<String, dynamic> json) =>
       _$PromptFeedbackFromJson(json);
