@@ -36,11 +36,7 @@ Refer to the complete documentation for more detailed usage instructions.
 
 ## Documentation
 
-Complete documentation is available [here].
-
-## Contributing
-
-Contributions are welcome. See the [CONTRIBUTING.md] for guidelines.
+Complete documentation is available [here](https://pub.dev/documentation/generative_ai_dart/latest/).
 
 ## License
 
