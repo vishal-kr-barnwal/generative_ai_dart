@@ -54,6 +54,32 @@ extension Request on RequestType {
     return fromJson(jsonDecode(json) as Map<String, dynamic>);
   }
 
+  /// Fetches data from a given GenerativeModel.
+  ///
+  /// This function is asynchronous and returns a `Future` containing a
+  /// continuous stream of `String` data.
+  ///
+  /// It takes in two parameters:
+  /// - [model]: A `GenerativeModel` instance.
+  /// - [body]: A generic data type [`T`](https://api.dart.dev/stable/2.9.2/dart-core/T-class.html).
+  ///
+  /// Initially, it establishes an HTTP client and constructs a URL using
+  /// `model.model`. It then performs a post operation to that URL, setting
+  /// several headers and writing the body in JSON format. If the response
+  /// is OK, handles the responses and closes the client, otherwise,
+  /// it gets the error message, closes the client and throws a `GoogleGenerativeAIError`.
+  ///
+  /// During any part of this process, if an error occurs, it logs the error,
+  /// closes the client, and throws a `GoogleGenerativeAIError` with a description
+  /// of the error.
+  ///
+  /// Throws:
+  /// - [GoogleGenerativeAIError]
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await RequestType.generateContent.fetch(myModel, myBody);
+  /// ```
   Future<Stream<String>> fetch<T>(
       final GenerativeModel model, final T body) async {
     final client = HttpClient();
@@ -88,8 +114,16 @@ extension Request on RequestType {
     }
   }
 
+  /// Future function [_getErrorMessage] gets error messages from
+  /// [HttpClientResponse] received as a response.
+  ///
+  /// Reference:
+  /// * [HttpClientResponse] used in function arguments.
+  /// * [Future] represents a potential value, or error, that will be available
+  /// at some time in the future.
   Future<String> _getErrorMessage(HttpClientResponse response) async {
     var message = "";
+
     try {
       final error = (jsonDecode(await response.transform(utf8.decoder).join())
           as Map<String, dynamic>)["error"] as Map<String, dynamic>;
@@ -99,11 +133,28 @@ extension Request on RequestType {
         message += " ${jsonEncode(error["details"])}";
       }
     } catch (e) {
-      // Ignoring
+      // Ignoring exceptions
     }
     return message;
   }
 
+  /// Handles a successful HTTP response by closing the client and returning the
+  /// response data as a [Stream<String>].
+  ///
+  /// This function accepts [HttpClientResponse] and [HttpClient] as arguments.
+  /// It transforms the response to UTF-8 format and listens to the stream. The
+  /// response data is added to the [controller] which is an instance of
+  /// [StreamController<String>]. When the stream is drained, the controller
+  /// and the HTTP client are closed. If an error occurs during this process, the
+  /// error is transferred to the controller and the client is closed.
+  ///
+  /// If there is no error, the controller's stream is returned. This stream
+  /// contains the response data.
+  ///
+  /// References:
+  /// * [HttpClientResponse] is a future-based HTTP client.
+  /// * [HttpClient] a client that receives content, like HTTP requests.
+  /// * [StreamController] controls a stream that sends events to its listeners.
   Stream<String> _handleOKResponseAndCloseClient(
       HttpClientResponse response, HttpClient client) {
     final controller = StreamController<String>();
