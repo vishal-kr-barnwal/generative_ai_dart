@@ -126,7 +126,7 @@ final class Content extends InputContent {
   List<Part> get parts => super.parts as List<Part>;
 
   /// Constructor for [Content]. Takes required parameters for [parts] and [role].
-  Content({required List<Part> super.parts, super.role}) : super._();
+  Content({required List<Part> super.parts, super.role = "user"}) : super._();
 
   /// Factory method to create a [Content] object from a JSON Map. It maps
   /// each part in the parts list to [Part] object using [Part.fromJson]
@@ -135,7 +135,7 @@ final class Content extends InputContent {
         parts: (json["parts"] as List<dynamic>)
             .map((final part) => Part.fromJson(part as Map<String, dynamic>))
             .toList(),
-        role: json["role"] as String?);
+        role: json["role"] as String);
   }
 
   @override
@@ -143,10 +143,7 @@ final class Content extends InputContent {
   /// Convert the [Content] object into a JSON map. It maps each part
   /// in the parts list to a raw map using [Part.toJson]
   Map<String, dynamic> toJson() {
-    return {
-      "parts": parts.map((e) => e.toJson()).toList(),
-      if (role != null) "role": role
-    };
+    return {"parts": parts.map((e) => e.toJson()).toList(), "role": role};
   }
 }
 
@@ -159,20 +156,21 @@ class InputContent {
   final dynamic parts;
 
   /// Represents the [role]
-  final String? role;
+  final String role;
 
   /// Default constructor, setting [parts] and [role] as required parameters.
-  InputContent._({required this.parts, this.role});
+  InputContent._({required this.parts, required this.role});
 
   /// Constructor that defines an instance of [InputContent] from a `string`
   /// [part] and a [role].
-  InputContent.fromString({required final String part, this.role})
+  InputContent.fromString({required final String part, required this.role})
       : parts = part;
 
   /// Constructor that defines an instance of [InputContent] from a `List` of
   /// [parts] and a [role]. It throws an [AssertionError] if any part is not
   /// a [String] or [Part].
-  InputContent.fromList({required List<dynamic> this.parts, this.role}) {
+  InputContent.fromList(
+      {required List<dynamic> this.parts, required this.role}) {
     if ((parts as List<dynamic>).any((e) => !(e is String || e is Part))) {
       throw AssertionError(
           "Parts can only contain either String or Part data type.");
@@ -183,7 +181,7 @@ class InputContent {
   /// map.
   factory InputContent.fromJson(Map<String, dynamic> json) {
     final partsJson = json["parts"];
-    final role = json["role"] as String?;
+    final role = json["role"] as String;
 
     if (partsJson is String) {
       return InputContent.fromString(part: partsJson, role: role);
@@ -226,6 +224,6 @@ class InputContent {
   /// Converts `this` to a `Map<String, dynamic>` that can be encoded into
   /// JSON.
   Map<String, dynamic> toJson() {
-    return {"parts": _partsToJson(), if (role != null) "role": role};
+    return {"parts": _partsToJson(), "role": role};
   }
 }
