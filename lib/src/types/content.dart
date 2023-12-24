@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:mime/mime.dart';
@@ -68,35 +67,8 @@ abstract class Part {
   /// [GenerativeContentBlob].
   factory Part.inline(GenerativeContentBlob blob) => InlineDataPart._(blob);
 
-  /// Asynchronously reads a [File] and returns an instance of [Part].
-  static Future<Part> fromFile(File file) async {
-    final bytes = await file.readAsBytes();
-
-    return InlineDataPart._fromBytes(bytes);
-  }
-
   /// Synchronously reads a [File] and returns an instance of [Part].
-  factory Part.fromFileSync(File file) {
-    final bytes = file.readAsBytesSync();
-
-    return InlineDataPart._fromBytes(bytes);
-  }
-
-  /// Synchronously reads a [File] using a file path and returns an instance
-  /// of [Part].
-  factory Part.fromFilePathSync(String path) {
-    File file = File(path);
-
-    return Part.fromFileSync(file);
-  }
-
-  /// Asynchronously reads a [File] using a file path and returns an instance
-  /// of [Part].
-  static Future<Part> fromFilePath(String path) async {
-    File file = File(path);
-
-    return Part.fromFile(file);
-  }
+  factory Part.blob(Uint8List bytes) => InlineDataPart._fromBytes(bytes);
 
   /// Serializes the [Part] object into a JSON data structure.
   Map<String, dynamic> toJson() => {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:generative_ai_dart/generative_ai_dart.dart';
 import 'package:test/scaffolding.dart';
@@ -11,7 +12,7 @@ void main() {
 
     final parts = [
       Part.text("Is it a cat?"),
-      Part.fromFilePathSync("test_resources/cat.png")
+      Part.blob(File('test_resources/cat.png').readAsBytesSync())
     ];
 
     final response = model.generateContent([Content.user(parts)]);
