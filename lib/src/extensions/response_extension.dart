@@ -2,15 +2,20 @@ import 'package:generative_ai_dart/generative_ai_dart.dart';
 
 import '../logger.dart';
 
+/// [_badFinishReasons] holds list of bad finish reasons.
 final _badFinishReasons = [FinishReason.recitation, FinishReason.safety];
 
+/// This is an extension method for [GenerateContentCandidate] class.
 extension on GenerateContentCandidate {
+  /// Returns true if the current object has a bad finish reason.
   bool hadBadFinishReason() {
     return (finishReason != null && _badFinishReasons.contains(finishReason));
   }
 }
 
+/// This is an extension method for [GenerateContentResponse] class.
 extension GenerateContentResponseExtension on GenerateContentResponse {
+  /// Returns text after several checks and validations.
   String text() {
     if (candidates != null && candidates!.isNotEmpty) {
       if (candidates![0].hadBadFinishReason()) {
@@ -32,6 +37,7 @@ extension GenerateContentResponseExtension on GenerateContentResponse {
     return "";
   }
 
+  /// Formats the error message when the content is blocked.
   String formatBlockErrorMessage() {
     var message = "";
     if ((candidates?.isEmpty ?? true) && promptFeedback != null) {
@@ -49,6 +55,7 @@ extension GenerateContentResponseExtension on GenerateContentResponse {
     return message;
   }
 
+  /// Returns the text of the first valid candidate's content part
   String _getText() =>
       candidates?.firstOrNull?.content.parts.firstOrNull?.text ?? "";
 }
