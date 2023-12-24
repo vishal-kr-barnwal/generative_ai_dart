@@ -11,14 +11,36 @@ const _baseUrl = "https://generativelanguage.googleapis.com";
 
 const _apiVersion = "v1";
 
+/// [_clientName] is a final variable containing the client's name
+/// and the package version he is currently using.
+///
+/// You can refer this to fetch the name and the version of the package
+/// the client is using.
 final _clientName = 'genai-dart/$packageVersion';
 
+/// Extension on [RequestType] to provide additional functionality.
 extension Request on RequestType {
+  /// Converts the provided [model] into a [Uri] with given parameters.
+  ///
+  /// Parameters:
+  ///
+  /// - model: Name of the machine learning model.
+  ///
+  /// Returns [Uri] created from the input model.
   Uri _toUri(final String model) {
     return Uri.parse('$_baseUrl/$_apiVersion/models/$model:$name')
         .replace(queryParameters: {if (isStream()) 'alt': 'sse'});
   }
 
+  /// Fetches and decodes a JSON response.
+  ///
+  /// Parameters:
+  ///
+  /// - model: The [GenerativeModel] to fetch data from.
+  /// - body: The body data to send with the request.
+  /// - fromJson: Function that converts [Map] to a specified model.
+  ///
+  /// Returns deserialized response data.
   Future<T> fetchJson<T>(final GenerativeModel model, final Object body,
       final T Function(Map<String, dynamic> fromJson) fromJson) async {
     if (isStream()) {
@@ -34,9 +56,9 @@ extension Request on RequestType {
 
   Future<Stream<String>> fetch<T>(
       final GenerativeModel model, final T body) async {
-    try {
-      final client = HttpClient();
+    final client = HttpClient();
 
+    try {
       final url = _toUri(model.model);
 
       final response = await (await client.postUrl(url)
@@ -47,40 +69,55 @@ extension Request on RequestType {
           .close();
 
       if (response.ok) {
-        final controller = StreamController<String>();
-        final stream = response.transform(utf8.decoder);
-
-        stream.listen((data) => controller.add(data), onDone: () {
-          controller.close();
-          client.close();
-        }, onError: (err) {
-          controller.addError(err);
-          client.close();
-        });
-
-        return controller.stream;
+        return _handleOKResponseAndCloseClient(response, client);
       }
 
-      var message = "";
-      try {
-        final error = (jsonDecode(await response.transform(utf8.decoder).join())
-            as Map<String, dynamic>)["error"] as Map<String, dynamic>;
-        message = error["message"];
+      String message = await _getErrorMessage(response);
 
-        if (error["details"] != null) {
-          message += " ${jsonEncode(error["details"])}";
-        }
-      } catch (e) {
-        // Ignoring
-      }
+      client.close();
 
-      throw Exception('[${response.statusCode}] $message');
+      throw GoogleGenerativeAIError(
+          'API Call failed with Status :- [${response.statusCode}] $message');
     } catch (e, stackTrace) {
+      client.close();
+
       log.severe(
           "Error fetching from ${toString()}: ${e.toString()}", e, stackTrace);
       throw GoogleGenerativeAIError(
           "Error fetching from ${toString()}: ${e.toString()}");
     }
+  }
+
+  Future<String> _getErrorMessage(HttpClientResponse response) async {
+    var message = "";
+    try {
+      final error = (jsonDecode(await response.transform(utf8.decoder).join())
+          as Map<String, dynamic>)["error"] as Map<String, dynamic>;
+      message = error["message"];
+
+      if (error["details"] != null) {
+        message += " ${jsonEncode(error["details"])}";
+      }
+    } catch (e) {
+      // Ignoring
+    }
+    return message;
+  }
+
+  Stream<String> _handleOKResponseAndCloseClient(
+      HttpClientResponse response, HttpClient client) {
+    final controller = StreamController<String>();
+    final stream = response.transform(utf8.decoder);
+
+    stream.listen((data) => controller.add(data), onDone: () {
+      controller.close();
+      client.close();
+    }, onError: (err) {
+      controller.addError(err);
+      client.close();
+    });
+
+    return controller.stream;
   }
 }
 
