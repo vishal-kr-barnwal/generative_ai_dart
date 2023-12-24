@@ -8,7 +8,8 @@ leveraging AI in your Dart applications.
 
 ## Key Features
 
-- **Google GenAI Models Interoperability:** The library provides seamless interaction with Google's GenAI models.
+- **Google GenAI Models Interoperability:** The library provides seamless interaction with Google's GenAI models like
+  Gemini, Gemini Vision, Palm, etc.
 - **Diverse Input Support:** It can handle different types of inputs such as Blob and String, providing flexibility
   according to your needs.
 - **Chat Session Generation:** It has the capability to generate and manage chat sessions.

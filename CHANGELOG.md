@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Added topics
+
 ## 0.1.1
 
 - Moving `HTTP Client` from `dart:io` to `http` package to support Web platform.
