@@ -124,28 +124,6 @@ Map<String, dynamic> _$GenerateContentRequestToJson(
       'contents': instance.contents,
     };
 
-StartChatParams _$StartChatParamsFromJson(Map<String, dynamic> json) =>
-    StartChatParams(
-      history: (json['history'] as List<dynamic>)
-          .map((e) => InputContent.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      generationConfig: json['generationConfig'] == null
-          ? const GenerationConfig()
-          : GenerationConfig.fromJson(
-              json['generationConfig'] as Map<String, dynamic>),
-      safetySettings: (json['safetySettings'] as List<dynamic>?)
-              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-    );
-
-Map<String, dynamic> _$StartChatParamsToJson(StartChatParams instance) =>
-    <String, dynamic>{
-      'safetySettings': instance.safetySettings,
-      'generationConfig': instance.generationConfig,
-      'history': instance.history,
-    };
-
 CountTokensRequest _$CountTokensRequestFromJson(Map<String, dynamic> json) =>
     CountTokensRequest(
       contents: (json['contents'] as List<dynamic>)

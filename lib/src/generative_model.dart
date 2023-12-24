@@ -13,19 +13,26 @@ final class GenerativeModel {
         safetySettings = params.safetySettings;
 
   Stream<GenerateContentResponse> generateContentStream(
-      GenerateContentRequest params) async* {
+      List<Content> request) async* {
     final url = RequestUrl(model, Task.streamGenerateContent, apiKey);
 
-    final stream = await url.fetch(params);
+    final stream = await url.fetch(GenerateContentRequest(
+        contents: request,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings));
 
     yield* processStream(stream);
   }
 
-  Future<GenerateContentResponse> generateContent(
-      GenerateContentRequest request) {
+  Future<GenerateContentResponse> generateContent(List<Content> request) {
     final url = RequestUrl(model, Task.generateContent, apiKey);
 
-    return url.fetchJson(request, GenerateContentResponse.fromJson);
+    return url.fetchJson(
+        GenerateContentRequest(
+            contents: request,
+            generationConfig: generationConfig,
+            safetySettings: safetySettings),
+        GenerateContentResponse.fromJson);
   }
 
   Future<EmbedContentResponse> embedContent(EmbedContentRequest params) {
@@ -35,15 +42,17 @@ final class GenerativeModel {
   }
 
   Future<BatchEmbedContentsResponse> batchEmbedContents(
-      BatchEmbedContentsRequest params) {
+      List<EmbedContentRequest> request) {
     final url = RequestUrl(model, Task.embedContent, apiKey);
 
-    return url.fetchJson(params, BatchEmbedContentsResponse.fromJson);
+    return url.fetchJson(BatchEmbedContentsRequest(requests: request),
+        BatchEmbedContentsResponse.fromJson);
   }
 
-  Future<CountTokensResponse> countTokens(CountTokensRequest params) {
+  Future<CountTokensResponse> countTokens(List<Content> request) {
     final url = RequestUrl(model, Task.countTokens, apiKey);
 
-    return url.fetchJson(params, CountTokensResponse.fromJson);
+    return url.fetchJson(
+        CountTokensRequest(contents: request), CountTokensResponse.fromJson);
   }
 }

@@ -83,20 +83,6 @@ final class GenerateContentRequest extends BaseParams {
 }
 
 @JsonSerializable()
-final class StartChatParams extends BaseParams {
-  final List<InputContent> history;
-
-  StartChatParams(
-      {required this.history, super.generationConfig, super.safetySettings});
-
-  factory StartChatParams.fromJson(Map<String, dynamic> json) =>
-      _$StartChatParamsFromJson(json);
-
-  @override
-  Map<String, dynamic> toJson() => _$StartChatParamsToJson(this);
-}
-
-@JsonSerializable()
 final class CountTokensRequest {
   final List<Content> contents;
 

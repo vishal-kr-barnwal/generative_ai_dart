@@ -119,129 +119,41 @@ final class InlineDataPart extends Part {
 ///
 /// The [toJson] method is overridden to convert the current
 /// [Content] object into a JSON map.
-final class Content extends InputContent {
-  @override
+final class Content {
+  final List<Part> parts;
 
-  /// Override the [parts] getter to return a [List<Part>] instead.
-  List<Part> get parts => super.parts as List<Part>;
+  final String? role;
 
-  /// Constructor for [Content]. Takes required parameters for [parts] and [role].
-  Content({required List<Part> super.parts, super.role = "user"}) : super._();
+  Content({required this.parts, required this.role});
 
   /// Factory method to create a [Content] object from a JSON Map. It maps
   /// each part in the parts list to [Part] object using [Part.fromJson]
   factory Content.fromJson(Map<String, dynamic> json) {
-    return Content(
-        parts: (json["parts"] as List<dynamic>)
-            .map((final part) => Part.fromJson(part as Map<String, dynamic>))
-            .toList(),
-        role: json["role"] as String);
+    final parts = <Part>[];
+
+    final partsJson = json["parts"];
+
+    if (partsJson is String) {
+      parts.add(TextPart(partsJson));
+    } else {
+      parts.addAll((partsJson as List)
+          .map((final part) => Part.fromJson(part as Map<String, dynamic>))
+          .toList());
+    }
+
+    return Content(parts: parts, role: json["role"] as String?);
   }
 
-  @override
+  Content.user({required this.parts}) : role = "user";
+
+  Content.model({required this.parts}) : role = "model";
 
   /// Convert the [Content] object into a JSON map. It maps each part
   /// in the parts list to a raw map using [Part.toJson]
   Map<String, dynamic> toJson() {
-    return {"parts": parts.map((e) => e.toJson()).toList(), "role": role};
-  }
-
-  factory Content.fromInput(InputContent input) {
-    final role = input.role;
-    final parts = input.parts;
-
-    if (parts is String) {
-      return Content(parts: [TextPart(parts)], role: role);
-    }
-
-    return Content(
-        parts: (parts as List).map((e) {
-          if (e is String) {
-            return TextPart(e);
-          }
-          return e as Part;
-        }).toList(),
-        role: role);
-  }
-}
-
-/// The base class [InputContent].
-///
-/// Utilized for managing [parts] which can be either `string` or
-/// `List<String | Part>` and a [role].
-class InputContent {
-  /// Can be either `string` or `List<String | Part>`
-  final dynamic parts;
-
-  /// Represents the [role]
-  final String role;
-
-  /// Default constructor, setting [parts] and [role] as required parameters.
-  InputContent._({required this.parts, required this.role});
-
-  /// Constructor that defines an instance of [InputContent] from a `string`
-  /// [part] and a [role].
-  InputContent.fromString({required final String part, required this.role})
-      : parts = part;
-
-  /// Constructor that defines an instance of [InputContent] from a `List` of
-  /// [parts] and a [role]. It throws an [AssertionError] if any part is not
-  /// a [String] or [Part].
-  InputContent.fromList(
-      {required List<dynamic> this.parts, required this.role}) {
-    if ((parts as List<dynamic>).any((e) => !(e is String || e is Part))) {
-      throw AssertionError(
-          "Parts can only contain either String or Part data type.");
-    }
-  }
-
-  /// Factory constructor to create an instance of [InputContent] from a [json]
-  /// map.
-  factory InputContent.fromJson(Map<String, dynamic> json) {
-    final partsJson = json["parts"];
-    final role = json["role"] as String;
-
-    if (partsJson is String) {
-      return InputContent.fromString(part: partsJson, role: role);
-    }
-
-    final parts = [];
-
-    for (final part in (partsJson as List<dynamic>)) {
-      if (part is String) {
-        parts.add(part);
-      } else {
-        parts.add(Part.fromJson(part as Map<String, dynamic>));
-      }
-    }
-
-    return InputContent.fromList(parts: parts, role: role);
-  }
-
-  /// Private method to convert _parts to JSON.
-  dynamic _partsToJson() {
-    if (parts is String) {
-      return parts;
-    }
-
-    final partsJson = [];
-    if (parts is List<dynamic>) {
-      for (final part in (parts as List<dynamic>)) {
-        if (part is String) {
-          partsJson.add(part);
-          continue;
-        } else {
-          partsJson.add((part as Part).toJson());
-        }
-      }
-    }
-
-    return partsJson;
-  }
-
-  /// Converts `this` to a `Map<String, dynamic>` that can be encoded into
-  /// JSON.
-  Map<String, dynamic> toJson() {
-    return {"parts": _partsToJson(), "role": role};
+    return {
+      "parts": parts.map((e) => e.toJson()).toList(),
+      if (role != null) "role": role
+    };
   }
 }
