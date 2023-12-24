@@ -51,13 +51,18 @@ abstract class Part {
   /// fields in the JSON are `null`, this method throws an `AssertionError`.
   factory Part.fromJson(Map<String, dynamic> json) {
     if (json["text"] != null) {
-      return TextPart(json["text"]);
+      return TextPart._(json["text"]);
     }
     if (json["inlineData"] != null) {
-      return InlineDataPart(GenerativeContentBlob.fromJson(json["inlineData"]));
+      return InlineDataPart._(
+          GenerativeContentBlob.fromJson(json["inlineData"]));
     }
     throw AssertionError("Both Text and Inline Data can't be null");
   }
+
+  factory Part.text(String text) => TextPart._(text);
+
+  factory Part.inline(GenerativeContentBlob blob) => InlineDataPart._(blob);
 
   static Future<Part> fromFile(File file) async {
     final bytes = await file.readAsBytes();
@@ -99,7 +104,7 @@ class TextPart extends Part {
 
   /// Constructor for [TextPart] that takes a string as an input and calls the
   /// internal constructor from the base class with the input text
-  TextPart(String text) : super._(text: text);
+  TextPart._(String text) : super._(text: text);
 }
 
 /// This final class [InlineDataPart] extends from the [Part] class. It represents an inline
@@ -112,13 +117,13 @@ class InlineDataPart extends Part {
   /// Constructor for [InlineDataPart] that takes a [GenerativeContentBlob] as
   /// an input and calls the internal constructor from the base class with the input
   /// inline data.
-  InlineDataPart(GenerativeContentBlob inlineData)
+  InlineDataPart._(GenerativeContentBlob inlineData)
       : super._(inlineData: inlineData);
 
   factory InlineDataPart._fromBytes(Uint8List bytes) {
     final mimeType = lookupMimeType('', headerBytes: bytes)!;
 
-    return InlineDataPart(
+    return InlineDataPart._(
         GenerativeContentBlob(mimeType: mimeType, data: base64Encode(bytes)));
   }
 }
@@ -147,7 +152,7 @@ class Content {
     final parts = <Part>[];
 
     if (partsJson is String) {
-      parts.add(TextPart(partsJson));
+      parts.add(TextPart._(partsJson));
     } else {
       partsJson?.forEach((partJson) {
         parts.add(Part.fromJson(partJson));
