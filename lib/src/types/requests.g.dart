@@ -64,23 +64,6 @@ Map<String, dynamic> _$GenerationConfigToJson(GenerationConfig instance) {
   return val;
 }
 
-BaseParams _$BaseParamsFromJson(Map<String, dynamic> json) => BaseParams(
-      safetySettings: (json['safetySettings'] as List<dynamic>?)
-              ?.map((e) => SafetySetting.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      generationConfig: json['generationConfig'] == null
-          ? const GenerationConfig()
-          : GenerationConfig.fromJson(
-              json['generationConfig'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$BaseParamsToJson(BaseParams instance) =>
-    <String, dynamic>{
-      'safetySettings': instance.safetySettings,
-      'generationConfig': instance.generationConfig,
-    };
-
 ModelParams _$ModelParamsFromJson(Map<String, dynamic> json) => ModelParams(
       model: json['model'] as String,
       generationConfig: json['generationConfig'] == null
